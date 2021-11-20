@@ -8,5 +8,13 @@
   },
   "keywords": [],
   "author": "David Nienajadlo <dawidnienajadlo96@gmail.com> (https://github.com/davidN96/apicon.js)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "eslint": "^8.2.0"
+  }
 }
