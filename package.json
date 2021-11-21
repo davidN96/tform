@@ -4,6 +4,7 @@
     "description": "Lightweight Vue 2 form control library",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "url": "https://github.com/davidN96/tform",
     "keywords": [
         "Vue 2 Form",
         "TForm",
