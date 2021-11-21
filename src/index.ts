@@ -6,6 +6,7 @@ import {
     TFormOptions,
     TFormErrors,
 } from "./types";
+export * as yup from "yup";
 
 class TForm<T> {
     private _initialValues: T | TFormInitialObject = {};
