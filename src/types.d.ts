@@ -1,4 +1,4 @@
-import { AnySchema } from "yup";
+import { AnySchema, ObjectSchema } from "yup";
 
 export type TFormValidators = Record<string, AnySchema>;
 export type TFormInitialObject = Record<string, any>;

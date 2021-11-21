@@ -1,3 +1,4 @@
+import * as yup from "yup";
 import {
     TFormInitialObject,
     TFormErrorMessage,
@@ -67,15 +68,35 @@ class TForm<T> {
         return errors;
     }
 
+    private get errorsCount(): Record<string, number> {
+        const errorsCount: Record<string, number> = {};
+
+        Object.keys(this._errors).forEach(
+            (field: string) => (errorsCount[field] = this._errors[field].length)
+        );
+
+        return errorsCount;
+    }
+
     public get errors(): Record<
         string,
-        Record<string, TFormErrorMessage | boolean>
+        Record<string, TFormErrorMessage | boolean | number>
     > {
         return {
+            count: this.errorsCount,
             first: this.firstErrors,
             last: this.lastErrors,
             any: this.hasErrors,
         };
+    }
+
+    public clearFieldErrors(field: string): void {
+        if (field && this._errors[field]) this._errors[field] = [];
+    }
+
+    public clearErrors(field?: string): void {
+        if (field) this.clearFieldErrors(field);
+        else Object.keys(this._errors).forEach(this.clearFieldErrors);
     }
 
     public get isValid(): boolean {
@@ -106,7 +127,62 @@ class TForm<T> {
         this.isPending = true;
     }
 
-    public continute(): void {
+    public continue(): void {
         this.isPending = false;
+    }
+
+    public reset(): void {
+        this.values = { ...this._initialValues } as T;
+    }
+
+    public validateField(field: string): boolean {
+        const value = (this.values as Record<string, unknown>)[field];
+        const schema = this._validators[field];
+
+        if (!schema) return true;
+
+        this.wait();
+
+        try {
+            schema.validateSync(value);
+        } catch (ex) {
+            this._errors[field] = (ex as yup.ValidationError).errors;
+        } finally {
+            this.continue();
+
+            return this.hasErrors[field];
+        }
+    }
+
+    public async validateFieldAsync(field: string): Promise<boolean> {
+        const value = (this.values as Record<string, unknown>)[field];
+        const schema = this._validators[field];
+
+        if (!schema) return true;
+
+        this.wait();
+
+        try {
+            schema.validate(value);
+        } catch (ex) {
+            this._errors[field] = (ex as yup.ValidationError).errors;
+        } finally {
+            this.continue();
+            return this.hasErrors[field];
+        }
+    }
+
+    public validate(): boolean {
+        Object.keys(this._validators).forEach(this.validateField);
+
+        return this.isValid;
+    }
+
+    public async validateAsync(): Promise<boolean> {
+        await Promise.all(
+            Object.keys(this._validators).map(this.validateFieldAsync)
+        );
+
+        return this.isValid;
     }
 }
