@@ -4,6 +4,15 @@
     "description": "Lightweight Vue 2 form control library",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "tags": [
+        "Vue 2 Form",
+        "TForm",
+        "Vue Form control",
+        "Form helper",
+        "Form builder",
+        "Form creator",
+        "Form state management"
+    ],
     "files": [
         "/dist"
     ],
