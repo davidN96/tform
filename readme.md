@@ -8,7 +8,7 @@ To validation TForm is using yup library. Great to use with any UI library like 
 #### :hammer: Installation
 
 ```javascript
-npm i tform
+npm i vue-tform
 ```
 
 #### :rocket: How to use?

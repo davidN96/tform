@@ -1,5 +1,5 @@
 {
-    "name": "tform",
+    "name": "vue-tform",
     "version": "1.0.0",
     "description": "Lightweight Vue 2 form control library",
     "main": "dist/index.js",
