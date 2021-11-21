@@ -1,13 +1,24 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const yup = __importStar(require("yup"));
 class TForm {
     constructor(options) {
+        this._validatorsPending = {};
         this._initialValues = {};
         this._values = {};
         this._validators = {};
+        this._touched = {};
         this._errors = {};
         this._pending = false;
-        this.initializeValidators(options === null || options === void 0 ? void 0 : options.validationSchema);
+        this.initializeValidators(options.initialValues, options === null || options === void 0 ? void 0 : options.validationSchema);
+        this.initializeTouched(options.initialValues);
         this.initializeErrors(options.initialValues);
         this.inializeValues(options.initialValues);
     }
@@ -18,13 +29,24 @@ class TForm {
     initializeErrors(values) {
         Object.keys(values).forEach((field) => (this._errors[field] = []));
     }
-    initializeValidators(validators) {
-        if (validators)
+    initializeValidators(values, validators) {
+        if (validators) {
             this._validators = Object.assign({}, validators);
+            Object.keys(values).forEach((field) => (this._validatorsPending[field] = false));
+        }
+    }
+    initializeTouched(values) {
+        Object.keys(values).forEach((field) => (this._touched[field] = false));
+    }
+    handleTouch(field) {
+        this._touched[field] = true;
+    }
+    handleUntouch(field) {
+        this._touched[field] = false;
     }
     get firstErrors() {
         const errors = {};
-        Object.keys(this._errors).forEach((field) => (errors[field] = this._errors[field][0]));
+        Object.keys(this._errors).forEach((field) => (errors[field] = this._errors[field][0] || null));
         return errors;
     }
     get lastErrors() {
@@ -32,7 +54,8 @@ class TForm {
         Object.keys(this._errors).forEach((field) => {
             var _a;
             return (errors[field] =
-                this._errors[field][((_a = this._errors[field]) === null || _a === void 0 ? void 0 : _a.length) - 1]);
+                this._errors[field][((_a = this._errors[field]) === null || _a === void 0 ? void 0 : _a.length) - 1] ||
+                    null);
         });
         return errors;
     }
@@ -52,6 +75,7 @@ class TForm {
             first: this.firstErrors,
             last: this.lastErrors,
             any: this.hasErrors,
+            all: this._errors,
         };
     }
     clearFieldErrors(field) {
@@ -76,62 +100,85 @@ class TForm {
     set values(values) {
         this._values = values;
     }
-    get isPending() {
+    get isFormPending() {
         return this._pending;
     }
-    set isPending(state) {
+    set isFormPending(state) {
         this._pending = state;
     }
+    get pending() {
+        return Object.assign({ form: this.isFormPending }, this._validatorsPending);
+    }
     wait() {
-        this.isPending = true;
+        this.isFormPending = true;
     }
     continue() {
-        this.isPending = false;
+        this.isFormPending = false;
     }
     reset() {
         this.values = Object.assign({}, this._initialValues);
+        Object.keys(this._touched).forEach(this.handleUntouch);
+    }
+    waitForField(field) {
+        this._validatorsPending[field] = true;
+    }
+    continueForField(field) {
+        this._validatorsPending[field] = false;
     }
     validateField(field) {
-        const value = this.values[field];
         const schema = this._validators[field];
-        if (!schema)
-            return true;
-        this.wait();
-        try {
-            schema.validateSync(value);
+        if (schema) {
+            this.waitForField(field);
+            try {
+                yup.object(this._validators).validateSyncAt(field, this.values, { abortEarly: false });
+            }
+            catch (ex) {
+                this._errors[field] = ex.errors;
+            }
+            this.continueForField(field);
         }
-        catch (ex) {
-            this._errors[field] = ex.errors;
-        }
-        finally {
-            this.continue();
-            return this.hasErrors[field];
-        }
+        return this.hasErrors[field];
     }
     async validateFieldAsync(field) {
-        const value = this.values[field];
         const schema = this._validators[field];
         if (!schema)
             return true;
-        this.wait();
-        try {
-            schema.validate(value);
+        if (schema) {
+            this.waitForField(field);
+            try {
+                await yup
+                    .object(this._validators)
+                    .validateAt(field, this.values, { abortEarly: false });
+            }
+            catch (ex) {
+                this._errors[field] = ex.errors;
+            }
+            this.continueForField(field);
         }
-        catch (ex) {
-            this._errors[field] = ex.errors;
-        }
-        finally {
-            this.continue();
-            return this.hasErrors[field];
-        }
+        return this.hasErrors[field];
     }
     validate() {
-        Object.keys(this._validators).forEach(this.validateField);
+        Object.keys(this._validators).forEach((field) => this.validateField(field));
         return this.isValid;
     }
     async validateAsync() {
-        await Promise.all(Object.keys(this._validators).map(this.validateFieldAsync));
+        await Promise.all(Object.keys(this._validators).map(async (field) => await this.validateFieldAsync(field)));
         return this.isValid;
+    }
+    handleFocusIn(e) {
+        const field = e.target.name;
+        if (field) {
+            this.clearFieldErrors(field);
+            this.handleTouch(field);
+        }
+    }
+    async handleFocusOut(e) {
+        const field = e.target.name;
+        if (field)
+            await this.validateFieldAsync(field);
+    }
+    handleSubmit() {
+        this.validateAsync();
     }
 }
 exports.default = TForm;
