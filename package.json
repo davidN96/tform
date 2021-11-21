@@ -1,17 +1,20 @@
 {
     "name": "vue-tform",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Lightweight Vue 2 form control library",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
-    "tags": [
+    "keywords": [
         "Vue 2 Form",
         "TForm",
         "Vue Form control",
         "Form helper",
         "Form builder",
         "Form creator",
-        "Form state management"
+        "Form state management",
+        "Validation",
+        "Form validation control",
+        "Vue 2"
     ],
     "files": [
         "/dist"
@@ -19,7 +22,6 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [],
     "author": "David Nienajadlo <dawidnienajadlo96@gmail.com> (https://github.com/davidN96/apicon.js)",
     "license": "ISC",
     "dependencies": {

@@ -34,7 +34,7 @@ npm i vue-tform
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import * as yup from "yup";
-import TForm from "tform";
+import TForm from "vue-tform";
 
 interface Model {
     example: string;
