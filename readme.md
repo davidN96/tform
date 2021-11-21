@@ -23,7 +23,7 @@ npm i vue-tform
         @focusout="(e) => form.handleFocusOut(e)"
     >
         <input
-            name="name"
+            name="example"
             :disabled="form.errors.any.example"
             v-model="form.values.example"
         />
