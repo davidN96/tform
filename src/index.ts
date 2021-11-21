@@ -4,7 +4,7 @@ import {
     TFormValidators,
     TFormOptions,
     TFormErrors,
-} from "types";
+} from "./types";
 
 class TForm<T> {
     private _initialValues: T | TFormInitialObject = {};
