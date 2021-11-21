@@ -164,7 +164,10 @@ export default class TForm<T> {
 
     public reset(): void {
         this.values = { ...this._initialValues } as T;
-        Object.keys(this._touched).forEach(this.handleUntouch);
+        Object.keys(this._values).forEach((field) => {
+            this.clearFieldErrors(field);
+            this.handleUntouch(field);
+        });
     }
 
     private waitForField(field: string): void {
