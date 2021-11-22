@@ -2,16 +2,18 @@
 
 #### :question: What is tform?
 
-TForm is Vue 2 form helper. It's making development faster.
-To validation TForm is using yup library. Great to use with any UI library like Vuetify.
+TForm is Vue form helper.
+It's making development faster.
+To validation TForm use yup library. 
+Great to use with any UI library like Vuetify.
 
 #### :hammer: Installation
 
-```javascript
+```typescript
 npm i vue-tform
 ```
 
-#### :rocket: How to use?
+#### :rocket: Getting started
 
 ##### Basic usage
 
@@ -65,11 +67,11 @@ export default class Example extends Vue {
 
 ```javascript
     errors: {
-        first: // First error message for any form field - get by form.errors.first.example,
-        last: // Last error message for any form field - get by form.errors.last.example
-        any: // Boolean state - has field any error - get by form.errors.any.example
-        count: // Errors count for any form field - get by form.errors.count.example
-        all: // Errors messages array for all form fields - get by form.errors.all.example
+        first: "", // First error message for any form field - get by form.errors.first.example
+        last: "", // Last error message for any form field - get by form.errors.last.example
+        any: false, // Boolean state - has field any error - get by form.errors.any.example
+        count: 0, // Errors count for any form field - get by form.errors.count.example
+        all: [] // Errors messages array for all form fields - get by form.errors.all.example
     }
 ```
 
@@ -79,8 +81,8 @@ export default class Example extends Vue {
 
     ```javascript
     pending: {
-        example: // boolean state of validation,
-        form: // is form blocked
+        example: false, // boolean state of validation,
+        form: false, // is form blocked
     }
     ```
 
@@ -100,11 +102,28 @@ export default class Example extends Vue {
 
 -   ##### validate()
 
-    Validate whole form sync
+    Validate whole form sync. Returns boolean state - isFormValid
+
+    ```typescript  
+    private handleSubmit(): void
+    {
+        const isValid: boolean = this.form.validate();
+
+        if(isValid) doSomething();
+    }
+    ```
 
 -   ##### validateAsync()
 
-    Validate whole form async
+    Validate whole form async. Returns boolean state - isFormValid
+    ```typescript
+    private async handleSubmit(): Promise<void>
+    {
+        const isValid: boolean = await this.form.validateAsync();
+
+        if(isValid) doSomething();
+    }
+    ```
 
 -   ##### handleFocusIn(e: Event)
 
