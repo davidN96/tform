@@ -10,7 +10,7 @@
       "url": "https://github.com/davidN96/tform"
     },
     "keywords": [
-        "Vue 2 Form",
+        "Vue Form",
         "TForm",
         "Vue Form control",
         "Form helper",
@@ -19,13 +19,14 @@
         "Form state management",
         "Validation",
         "Form validation control",
-        "Vue 2"
+        "Vue 2",
+        "Vue 3"
     ],
     "files": [
         "/dist"
     ],
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "tsc"
     },
     "license": "MIT",
     "dependencies": {

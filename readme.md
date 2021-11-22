@@ -20,9 +20,9 @@ npm i vue-tform
 ```vue
 <template>
     <form
-        @submit="(e) => form.handleSubmit(e)"
-        @focusin="(e) => form.handleFocusIn(e)"
+        @submit.prevent="(e) => form.handleSubmit(e)"
         @focusout="(e) => form.handleFocusOut(e)"
+        @focusin="(e) => form.handleFocusIn(e)"
     >
         <input
             name="example"
@@ -65,13 +65,13 @@ export default class Example extends Vue {
 -   ##### Errors
     Current form errors object.
 
-```javascript
-    errors: {
-        first: "", // First error message for any form field - get by form.errors.first.example
-        last: "", // Last error message for any form field - get by form.errors.last.example
-        any: false, // Boolean state - has field any error - get by form.errors.any.example
-        count: 0, // Errors count for any form field - get by form.errors.count.example
-        all: [] // Errors messages array for all form fields - get by form.errors.all.example
+```typescript
+    interface errors<T>: {
+        first: string,  // First error message for any form field - get by form.errors.first.example
+        last: string,   // Last error message for any form field - get by form.errors.last.example
+        any: boolean,   // Boolean state - has field any error - get by form.errors.any.example
+        count: number,  // Errors count for any form field - get by form.errors.count.example
+        all: string[]   // Errors messages array for all form fields - get by form.errors.all.example
     }
 ```
 
@@ -79,12 +79,12 @@ export default class Example extends Vue {
 
     Current validation pending state for all fields and loading state for whole form.
 
-    ```javascript
-    pending: {
-        example: false, // boolean state of validation,
-        form: false, // is form blocked
-    }
-    ```
+```typescript
+interface pending<T>: {
+    example: boolean,    // boolean state of validation,
+    form: boolean,   // is form blocked
+}
+```
 
 #### Available methods
 
@@ -127,11 +127,32 @@ export default class Example extends Vue {
 
 -   ##### handleFocusIn(e: Event)
 
-    Handle form focusin event. You have to pass it as arrow function with event parameter
+    Handle form focusin event. You have to pass it as arrow function with event parameter.
+    You have to pass this form method as function invoked in arrow function.
+
+    ```vue
+    <template>
+        <form @focusin="e => form.handleFocusIn(e)">...</form>
+    </template>
+    ```
 
 -   ##### handleFocusOut(e: Event)
 
     Handle form focusout event. You have to pass it as arrow function with event parameter
+    You have to pass this form method as function invoked in arrow function.
+
+    ```vue
+    <template>
+        <form @focusout="e => form.handleFocusOut(e)">...</form>
+    </template>
+    ```
 
 -   ##### handleSubmit()
     Handle form submit event. Use only when you want to validate on submit.
+    You have to pass this form method as function invoked in arrow function.
+
+    ```vue
+    <template>
+        <form @submit.prevent="e => form.handleSubmit(e)">...</form>
+    </template>
+    ```
